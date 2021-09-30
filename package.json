@@ -1,0 +1,17 @@
+{
+  "name": "Blast",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Oriun/Blast.git",
+  "author": "Oriun <71255433+Oriun@users.noreply.github.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "nodemon index.test.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13",
+    "serve": "^12.0.1"
+  }
+}
