@@ -4,6 +4,7 @@ var states = {}
 var vDOM = {}
 var vApp = null
 var getRoot = null
+var effects = []
 
 function mergeStates(){
   oldStates = states
@@ -12,7 +13,7 @@ export function repeat(n, func) {
   return new Array(n).fill().map((_,i)=>func(i))
 }
 
-export function deepEqual(o1,o2) {
+function deepEqual(o1,o2) {
   if(o1 === o2){ // if it is the same reference (or the same value if both primitives)
     return true
   } else if(o1 === undefined || o2 === undefined){ // Test if undefined to prevent any crash further on 
@@ -54,7 +55,7 @@ export function deepEqual(o1,o2) {
   }
   return true
 }
-window.dep = deepEqual
+
 export function virtualize(tagName, attrs = {}, ...children) {
   var key = undefined
   if(attrs.key){
@@ -69,14 +70,16 @@ export function virtualize(tagName, attrs = {}, ...children) {
   }
 }
 
-export function materialize({ t, c = [], a, p, f }) {
+function materialize({ t, c = [], a, p, f }) {
   if(f) {
     return c.map(materialize).flat(Infinity)
   }
   const ukey = count ++
   var elem = document.createElement(t)
   for(const attr in a) {
-    if(attr === "style" && typeof a[attr] === "object"){
+    if(attr === "ref" && a[attr].hasOwnProperty('current')){
+      a[attr].current = elem
+    } else if(attr === "style" && typeof a[attr] === "object"){
       var style = Object.entries(a.style).map(b=>`${b[0]}: ${b[1]}`).join('; ')
       elem.style = style
     } else if (attr.startsWith('on') || attr === "className") {
@@ -91,7 +94,7 @@ export function materialize({ t, c = [], a, p, f }) {
   return [elem]
 }
 
-export function vShortcut(tag) {
+function vShortcut(tag) {
   return function (attrs = {}, ...children) {
     return virtualize(tag, attrs, children)
   }
@@ -105,42 +108,43 @@ export const h2 = vShortcut('h2')
 export const h3 = vShortcut('h3')
 export const img = vShortcut('img')
 export const br = vShortcut('br')
+export const button = vShortcut('button')
 
 
-export function vDiff(oldTree, newTree, rootElem) {
+function vDiff(oldTree, newTree, rootElem) {
   // We assume the two tree exists
   if(typeof oldTree === "string"){
     if(typeof newTree !== "string"){
       return ()=> {
-        rootElem.replaceWith(...materialize(newTree))//1
+        rootElem.replaceWith(...materialize(newTree))
       }
     } else if(oldTree !== newTree){
       return ()=>{
-        rootElem.textContent = newTree//2
+        rootElem.textContent = newTree
       }
     } else{
       return ()=>{}
     }
   } else if(typeof newTree === "string"){
     return ()=>{
-      rootElem.replaceWith(newTree)//3
+      rootElem.replaceWith(newTree)
     }
   } else if(oldTree.key !== newTree.key){
     return ()=>{
-      rootElem.replaceWith(...materialize(newTree))//4
+      rootElem.replaceWith(...materialize(newTree))
     }
   } else if(oldTree.t !== newTree.t || oldTree.f?.toString() != newTree.f?.toString()){
     return ()=> {
-      rootElem.replaceWith(...materialize(newTree))//5
+      rootElem.replaceWith(...materialize(newTree))
     }
   } else if (newTree.t && !deepEqual(oldTree.a, newTree.a)){
     return ()=> {
-      rootElem.replaceWith(...materialize(newTree))//6
+      rootElem.replaceWith(...materialize(newTree))
     }
   } else if (newTree.f) {
     if(!deepEqual(oldTree.b, newTree.b) || !deepEqual(oldStates[oldTree.p], states[newTree.p])){
       return ()=> {
-        rootElem.replaceWith(...materialize(newTree))//8
+        rootElem.replaceWith(...materialize(newTree))
       }
     }
   }
@@ -173,7 +177,7 @@ export function Component(f) {
   }
 }
 
-export function render(root, path="#"){
+function render(root, path="#"){
   let vElem = root
   vElem.p = path
   if(vElem.f){
@@ -192,6 +196,20 @@ export function render(root, path="#"){
   return vElem
 }
 
+function cleanEffects(){
+  while(effects[0]){
+    effects.shift()()
+  }
+}
+
+function update(){
+  const nextVDOM = render(vApp)
+  vDiff(vDOM, nextVDOM,getRoot())()
+  mergeStates()
+  vDOM = nextVDOM
+  cleanEffects()
+}
+
 export function useState(context, defaultValue) {
   if(!context || typeof context !== "object" || !context.path || !Array.isArray(context.states) ) throw new Error('invalid first argument for useState')
   context.n ||= 0
@@ -204,13 +222,41 @@ export function useState(context, defaultValue) {
     var v = value
     if(typeof v === "function") v = v(context.states[n])
     states[context.path][n] = v
-    const nexVDOM = render(vApp)
-    vDiff(vDOM, nexVDOM,getRoot())()
-    mergeStates()
-    vDOM = nexVDOM
+    update()
   }
   context.n++
   return [context.states[n],setState]
+}
+
+export function useEffect(context, effect, dependencies) {
+  if(!context || typeof context !== "object" || !context.path || !Array.isArray(context.states) ) throw new Error('invalid first argument for useEffect')
+  context.n ||= 0
+  var n = context.n
+  if(!context.states[n]){
+    context.states[n] = states[context.path][n] = {}
+  }
+  
+  if(!context.states[n].hasOwnProperty('deps') || !deepEqual(context.states[n].deps, dependencies)){
+    console.log('yo')
+    effects.push(()=>{
+      context.states[n].ext?.()
+      states[context.path][n].ext = effect(context.states[n].deps)
+      states[context.path][n].deps = dependencies
+    })
+  }
+  context.n++
+}
+
+export function useRef(context, defaultValue = null) {
+  if(!context || typeof context !== "object" || !context.path || !Array.isArray(context.states) ) throw new Error('invalid first argument for useRef')
+  context.n ||= 0
+  var n = context.n
+  if(!context.states[n]){
+    var refObject = { current : defaultValue }
+    context.states[n] = states[context.path][n] = refObject
+  }
+  context.n++
+  return states[context.path][n]
 }
 
 export function launch(app, selector){
@@ -219,4 +265,5 @@ export function launch(app, selector){
   mergeStates
   getRoot = ()=> document.querySelector(selector)
   getRoot().replaceWith(...materialize(vDOM))
+  cleanEffects()
 }
