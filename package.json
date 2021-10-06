@@ -7,11 +7,18 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "test": "nodemon index.test.js"
+    "start": "webpack-cli serve --open --config webpack.dev.js",
+    "build": "webpack-cli --config webpack.prod.js",
+    "lib": "webpack-cli --config webpack.lib.js"
   },
   "devDependencies": {
+    "compression-webpack-plugin": "^9.0.0",
+    "html-webpack-plugin": "^5.3.2",
     "nodemon": "^2.0.13",
-    "serve": "^12.0.1"
+    "serve": "^12.0.1",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^5.57.1",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.3.1"
   }
 }

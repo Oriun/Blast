@@ -1,5 +1,10 @@
-import { span, div, button, br, repeat, Component, useState, useEffect, useRef, launch } from './src/index.t2.mjs'
+import { vShortcut as _, Component, useState, useEffect, useRef, launch } from '../lib/index.js'
 
+
+function repeat(n, func) {
+  return new Array(n).fill().map((_,i)=>func(i))
+}
+const span = _('span'), div = _('div'), button = _('button'), br = _('br')
 const Box = Component( ({ className = "boxx", id = "" } = {}) => {
 
   return span({ id },
@@ -48,6 +53,7 @@ const App = Component( ({ n = 0 }, _) => {
   window.setC = setCurrent
   return div({ id : "root" },
     current,
+    "Idée : Props intelligents (ex: Propagate={true|false} pour stop la propagation des clics",
     br(),
     br(),
     button({ onclick: ()=>setN(a=>++a) }, "Add 1 to n"),
