@@ -250,7 +250,7 @@ margin-bottom: 48px;
 }
 .sect-4 .grid div h6{
 font-family: var(--avenir);
-font-weight: 400;//500;
+font-weight: 400;
 font-size: 19.9021px;
 line-height: 27px;
 color: var(--false-black);
@@ -268,7 +268,7 @@ border-color: white;
 .sect-4 .grid div:hover h6
 {
 transition-duration: .2s;
-font-weight: 600;//800;
+font-weight: 600;
 }
 .sect-5 {
 position: relative;
@@ -633,8 +633,8 @@ border-radius: 2px;
 .sect-11 .sub-row .pagination div.activated {
 background-color: var(--green-enjoy);
 }
-.sect-9 .sub-row .arrows{,
-.sect-11 .sub-row .arrows
+.sect-9 .sub-row .arrows,
+.sect-11 .sub-row .arrows{
 display:flex;
 }
 .sect-9 .sub-row .arrows img,
