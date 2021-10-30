@@ -39,3 +39,62 @@
   - Animations
   - Responsive
   - Composants réutilisables
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+vDiff Cases
+
+- Single Child : Same Component
+
+- Single Child : Different Component
+
+- Multiple Child : Different Component
+
+- Multiple Chitouch

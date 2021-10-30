@@ -4,12 +4,25 @@ import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+
 export default {
   mode: 'production',
-  entry: './src/app.js',
+  entry: './src/app.jsx',
   output: {
     filename: './main.js',
     path: join(__dirname, 'build')
+  },
+  module: {
+    rules: [
+      {
+        test: /\.jsx$/,
+        use: [
+          {
+            loader: join(__dirname, '/lib/blast-jsx/index.js')
+          }
+        ]
+      }
+    ]
   },
   plugins: [
     new HtmlWebpackPlugin({
