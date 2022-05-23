@@ -1,7 +1,7 @@
 {
-  "name": "blast",
-  "version": "1.0.0",
-  "main": "dist/index.ts",
+  "name": "@oriun/blast",
+  "version": "1.0.1",
+  "main": "dist/index.js",
   "license": "MIT",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -12,5 +12,15 @@
   ],
   "dependencies": {
     "typescript": "^4.4.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oriun/blast.git"
+  },
+  "author": "Oriun",
+  "bugs": {
+    "url": "https://github.com/Oriun/blast/issues"
+  },
+  "homepage": "https://github.com/Oriun/blast#readme",
+  "description": "React Clone"
 }
