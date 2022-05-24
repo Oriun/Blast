@@ -1,0 +1,12 @@
+{
+    "name": "@oriun/blast-svg",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/Oriun/Blast.git",
+    "author": "Oriun <71255433+Oriun@users.noreply.github.com>",
+    "license": "MIT",
+    "peerDependencies": {
+        "@oriun/blast-jsx": "^1.0.0",
+        "@oriun/blast": "^1.0.0"
+    }
+}

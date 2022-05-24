@@ -4,7 +4,7 @@ import CompressionPlugin from 'compression-webpack-plugin'
 
 export default {
   mode: 'production',
-  entry: './lib/index.js',
+  entry: './lib/blast/dist/index.js',
   output: {
     filename: './blast.min.js',
     library: 'Blast'

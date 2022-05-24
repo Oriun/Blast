@@ -4,6 +4,8 @@ import {
   BlastTunnelSymbol,
   BlastComponentState,
   BlastEffect,
+  BlastDispatch,
+  BlastMemo
 } from "./types";
 import { deepEqual } from "./utils";
 
@@ -37,12 +39,27 @@ export function useEffect(
   }
 
   if (!deepEqual(fresh ? dependencies : hookValues[index].deps, dependencies)) {
-    state.pushEffects(effect, dependencies);
+    state.pushEffects(index, effect, dependencies);
   }
   state.index++;
 }
 
-export function useRef(state: BlastComponentState, defaultValue: any = null) {
+export function useMemo(
+  state: BlastComponentState,
+  effect: BlastMemo,
+  dependencies: any
+): any {
+  const { fresh } = state
+  const [data, setData] = useState(state, { value: fresh ? effect(null) : null, dependencies })
+  if (fresh) return data.value
+  if (!deepEqual(dependencies, data?.dependcies)) {
+    const newValue = effect(data?.value)
+    setData(()=>newValue)
+    return newValue
+  }
+  return data.value
+}
+export function useRef(state: BlastComponentState, defaultValue: any = null): BlastRef {
   const { index, hookValues, fresh } = state;
 
   const refObject = new BlastRef(defaultValue);
@@ -68,14 +85,14 @@ export function startContext(
   state: BlastComponentState,
   tunnel: BlastTunnel,
   defaultValue: any
-) {
+): any {
   const [v, s] = useState(state, defaultValue);
   tunnel.update = s;
   tunnel.value = v;
   return v;
 }
 
-export function useContext(tunnel: BlastTunnel) {
+export function useContext(tunnel: BlastTunnel): [any, BlastDispatch] {
   const { value } = tunnel;
-  return [value, tunnel.update];
+  return [value, tunnel.update!];
 }

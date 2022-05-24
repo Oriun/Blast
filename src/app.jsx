@@ -1,70 +1,66 @@
-import Blast, { vShortcut as _, createContext, startContext, useContext, useState, useRef, launch } from 'Blast'
-import { ClickOutside, NoOut } from '../lib/intl/index.js'
+import Blast, { useState, useEffect } from "../lib/blast";
 
-const mainContext = createContext()
-
-const Box = ({ className = 'boxx', id = '' } = {}) => {
-  let c = 2
-  return <span id={id}>
-    Boxxx {id}
-    <Bax className={className} id={id}/>
-  </span>
-}
-
-const Bax = ({ className = 'boxx', id = '' } = {}) => {
-  const [context, update] = useContext(mainContext)
-  return <span id={id} onclick={() => update(a => ++a)}>
-    Baxxx {context.toString()} {id}
-  </span>
-}
-
-const Bouton = ({ n = 1 } = {}, $) => {
-  const [date, setDate] = useState($, Date.now())
-  const ref1 = useRef($, null)
-  function close (event) {
-    console.log(event.target.tagName)
-    setDate(Date.now())
-  }
-  console.log('date',date)
+const SVG = () => {
   return (
-    <span id='button' className='btn-class' intl={[NoOut, ClickOutside(close)]} style={{ border: '1px solid grey', padding: '8px' }} data-src='alabama' >
-      Hey boy&nbsp; {date}
-      <span className='btn-paragraphe' id={n} ref={ref1} >
-        Lorem Ipsum {n.toString()}
-      </span>
-      {n !== 1 ? 
-        'Different' : 
-        <Box className={n.toString() + $.toString()} id={'alabama'+ n.toString()} />
-      }
-    </span>
-  )
-}
+    <svg
+      className=""
+      width="12"
+      height="13"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 12 13"
+    >
+      <path
+        d="M10.3846 1.06834H8.53841V0.145264H7.61533V1.06834H3.92302V0.145264H2.99994V1.06834H1.15379C0.646098 1.06834 0.230713 1.48373 0.230713 1.99142V11.2222C0.230713 11.7299 0.646098 12.1453 1.15379 12.1453H10.3846C10.8923 12.1453 11.3076 11.7299 11.3076 11.2222V1.99142C11.3076 1.48373 10.8923 1.06834 10.3846 1.06834ZM10.3846 11.2222H1.15379V4.76065H10.3846V11.2222ZM10.3846 3.83757H1.15379V1.99142H2.99994V2.91449H3.92302V1.99142H7.61533V2.91449H8.53841V1.99142H10.3846V3.83757Z"
+        fill="currentColor"
+      ></path>
+    </svg>
+  );
+};
+const title = ["manu", "theo", "arnaud le boss"];
+const App = ({}, $) => {
+  console.count("render start");
 
-const App = ({ n = 0 }, $) => {
-  const ctx = useState($, 'Current Task : vDiff function => children diff + attributes separate diff')
-  console.log("ctx", ctx)
-  const [current, setCurrent] = ctx
-  const [nb, setN] = useState($, n)
-  const context = startContext($, mainContext, 42)
-  window.setC = setCurrent
+  const [i, setI] = useState($, 0);
+  const [page, setPage] = useState($, 0);
+  const [last, setLast] = useState($, 0);
+
+  useEffect(
+    $,
+    () => {
+      console.count("first useEffect");
+      setPage(Math.floor(Math.random() * 3));
+    },
+    [Math.floor(i / 3)]
+  );
+
+  useEffect(
+    $,
+    () => {
+      console.count("second useEffect");
+      document.title = title[page];
+      return () => {
+        console.count("effect");
+        setLast(page);
+      };
+    },
+    [page]
+  );
+
+  console.count("render end");
   return (
-    <div intl={[NoOut]}>
-      {current}
-      Don't forget lazy components,
-      <br/>
-      ToDo : update from specific node and not the root and propagate to children
-      {context}
-      <br/>
-      <br/>
-      <button onclick={() => setN(a => ++a) }>Add 1 to n</button>
-      {nb}
-      <br/>
-      <br/>
-      <Bouton n={nb}/>
+    <div className="App" _backgroundColor="green" >
+      <div>
+        <h4>{i}</h4>
+        <h4>Last : {title[last]}</h4>
+        <button onclick={() => setI((j) => j + 1)}>incremente</button>
+      </div>
+      <SVG />
+      Yo
     </div>
-  )
-}
+  );
+};
 
 window.onload = function () {
-  launch(App, '#root')
-}
+  const Application = new Blast().mount(App, "#root");
+};

@@ -2,15 +2,26 @@ export type Attributes = {
   [property: string]: any;
   key?: string;
   style?: object | string;
-  intl?: Array<(element: HTMLElement) => void>;
+  intl?: Array<(element: Element) => void>;
 };
 
 export type Materialized = Node | string;
+
 export type StringNode = string | number | boolean;
 
 export type State = [];
 
-export type BlastComponent = (props: object, $?: State) => VirtualNode;
+export type BlastStoredState = any[]
+
+export type BlastComponentState = {
+  index: number;
+  hookValues: BlastStoredState;
+  fresh: boolean;
+  pushEffects: (n: number, effect: BlastEffect, dependencies: any) => void;
+  update: (index: number, newValue: any) => Promise<void>;
+};
+
+export type BlastComponent = (props: object, $?: BlastComponentState) => VirtualNode | VirtualNode[];
 
 export type ElementNode = {
   path: string;
@@ -21,20 +32,14 @@ export type ElementNode = {
 };
 export type VirtualNode = ElementNode | StringNode;
 
-export type BlastEffect = (oldDependencies: any) => () => void;
+export type BlastEffect = (oldDependencies: any) => any;
+
+export type BlastMemo = (oldDependencies?: any) => () => any;
 
 export type BlastPendingEffect = () => void;
 
-export type BlastComponentState = {
-  index: number;
-  hookValues: any[];
-  fresh: boolean;
-  pushEffects: (effect: BlastEffect, dependencies: any) => void;
-  update: (index: number, newValue: any) => Promise<void>;
-};
-
 export type BlastState = {
-  [path: string]: BlastComponentState;
+  [path: string]: BlastStoredState;
 };
 
 export const BlastTunnelSymbol = Symbol();

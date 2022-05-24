@@ -21,7 +21,7 @@ export function deepEqual(o1: any, o2: any) {
   if (o1 === o2) {
     // if it is the same reference (or the same value if both primitives)
     return true;
-  } else if (o1 === undefined || o2 === undefined) {
+  } else if (o1 === undefined || o1 === null || o2 === undefined || o2 === undefined) {
     // Test if undefined to prevent any crash further on
     return false;
   } else if (o1.constructor.name !== o2.constructor.name) {
