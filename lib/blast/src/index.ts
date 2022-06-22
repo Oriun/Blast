@@ -21,11 +21,13 @@ function virtualize(
   attrs: Attributes = {},
   ...childNode: VirtualNode[]
 ): ElementNode {
-  const { key = "" } = attrs || {};
+  let key = "";
   let props: { [key: string]: any } = {};
   for (const property in attrs) {
-    if (property === 'key' || attrs[property] === undefined)
-    if (property.startsWith('c:')) {
+    if (attrs[property] === undefined) continue
+    else if (property === key) {
+      key = attrs.key!
+    } else if (property.startsWith('c:')) {
       if (!attrs[property]) continue
       const cla = property.slice(2).split(':').join(' ')
       if (!props.className)
@@ -95,6 +97,10 @@ const needUnit: { [key: string]: string } = {
   'padding-block-start': "px",
   'padding-inline-end': "px",
   'padding-block-end': "px",
+  gap: "px",
+  'column-gap': "px",
+  'row-gap': "px",
+  'border-radius': "px"
   // ...
 }
 function transformCSSProperty(property: string) {
