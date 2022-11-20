@@ -1,19 +1,44 @@
-import { VirtualNode, ElementNode } from "./types";
+import { VirtualNode, ElementNode, Materialized } from "./types";
 
 export const reqFrame =
   window.requestAnimationFrame ||
   // @ts-ignore
   window.webkitRequestAnimationFrame ||
   // @ts-ignore
-  window.mozRequestAnimationFrame;
+  window.mozRequestAnimationFrame ||
+  // @ts-ignore
+  window.oRequestAnimationFrame ||
+  // @ts-ignore
+  window.msRequestAnimationFrame ||
+  // @ts-ignore
+  function (callback, element) {
+    setTimeout(callback, 1000 / 60);
+  };
 
-export function isStringable (t: any) {
+export function replaceChildren(node: Element, ...children: Materialized[]) {
+  if (!node) throw new Error("Cannot replace children of " + node);
+  const e = node as any;
+  if (!(e instanceof Element))
+    throw new Error(
+      "Cannot replace children of class " +
+        (e.constructor?.name ?? e.toString())
+    );
+  if (!e.replaceChildren) {
+    e.innerHTML = "";
+    e.append(...children);
+    return;
+  }
+  e.replaceChildren(...children);
+}
+
+export function isStringable(t: any) {
   switch (typeof t) {
-    case 'string':
-    case 'number':
-    case 'boolean':
-      return true
-    default: return false
+    case "string":
+    case "number":
+    case "boolean":
+      return true;
+    default:
+      return false;
   }
 }
 
@@ -21,7 +46,12 @@ export function deepEqual(o1: any, o2: any) {
   if (o1 === o2) {
     // if it is the same reference (or the same value if both primitives)
     return true;
-  } else if (o1 === undefined || o1 === null || o2 === undefined || o2 === undefined) {
+  } else if (
+    o1 === undefined ||
+    o1 === null ||
+    o2 === undefined ||
+    o2 === undefined
+  ) {
     // Test if undefined to prevent any crash further on
     return false;
   } else if (o1.constructor.name !== o2.constructor.name) {

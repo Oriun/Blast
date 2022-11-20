@@ -49,17 +49,23 @@ export function useMemo(
   effect: BlastMemo,
   dependencies: any
 ): any {
-  const { fresh } = state
-  const [data, setData] = useState(state, { value: fresh ? effect(null) : null, dependencies })
-  if (fresh) return data.value
-  if (!deepEqual(dependencies, data?.dependcies)) {
-    const newValue = effect(data?.value)
-    setData(()=>newValue)
-    return newValue
+  const { fresh } = state;
+  const [data, setData] = useState(state, {
+    value: fresh ? effect(null) : null,
+    dependencies
+  });
+  if (fresh) return data.value;
+  if (!deepEqual(dependencies, data?.dependencies)) {
+    const value = effect(data?.value);
+    setData(() => ({ value, dependencies }));
+    return value;
   }
-  return data.value
+  return data.value;
 }
-export function useRef(state: BlastComponentState, defaultValue: any = null): BlastRef {
+export function useRef(
+  state: BlastComponentState,
+  defaultValue: any = null
+): BlastRef {
   const { index, hookValues, fresh } = state;
 
   const refObject = new BlastRef(defaultValue);
@@ -77,7 +83,7 @@ export function createTunnel() {
   return {
     [BlastTunnelSymbol]: true,
     update: null,
-    value: null,
+    value: null
   } as BlastTunnel;
 }
 

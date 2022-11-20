@@ -1,16 +1,14 @@
 {
-    "compilerOptions": {
-        "module": "esnext",
-        "target": "es2015",
-        "declaration": true,
-        "outDir": "./dist",
-        "forceConsistentCasingInFileNames": true,
-        "noImplicitReturns": true,
-        "strict": true,
-        "noUnusedLocals": true,
-        "sourceMap": true
-    },
-    "include": [
-        "src/**/*"
-    ]
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "declaration": true,
+    "outDir": "./dist",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "sourceMap": false
+  },
+  "include": ["src/**/*"]
 }
